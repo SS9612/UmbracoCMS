@@ -1,8 +1,8 @@
 ﻿@using Umbraco.Cms.Web.Common.PublishedModels;
-@inherits Umbraco.Cms.Web.Common.Views.UmbracoViewPage<ContactPage>
+@inherits Umbraco.Cms.Web.Common.Views.UmbracoViewPage<ServicePage>
 @{
     Layout = "~/Views/Shared/mainLayout.cshtml";
 }
 
 
-<h1>@Model.BannerTitle</h1>
+@Html.GetBlockListHtml(Model.Sections)
