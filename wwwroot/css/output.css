@@ -225,6 +225,9 @@
   .mt-5 {
     margin-top: calc(var(--spacing) * 5);
   }
+  .ml-1 {
+    margin-left: calc(var(--spacing) * 1);
+  }
   .block {
     display: block;
   }
@@ -288,6 +291,9 @@
   .gap-2 {
     gap: calc(var(--spacing) * 2);
   }
+  .gap-3 {
+    gap: calc(var(--spacing) * 3);
+  }
   .gap-4 {
     gap: calc(var(--spacing) * 4);
   }
@@ -339,6 +345,18 @@
   .bg-primary {
     background-color: var(--color-primary);
   }
+  .bg-white-100 {
+    background-color: var(--color-white-100);
+  }
+  .\[background-image\:url\(\'\/images\/Rectangle-left\.png\'\)\,url\(\'\/images\/Rectangle-right\.png\'\)\] {
+    background-image: url('/images/Rectangle-left.png'),url('/images/Rectangle-right.png');
+  }
+  .\[background-position\:left_bottom\,top_right\] {
+    background-position: left bottom,top right;
+  }
+  .bg-no-repeat {
+    background-repeat: no-repeat;
+  }
   .object-cover {
     object-fit: cover;
   }
@@ -363,17 +381,26 @@
   .py-3 {
     padding-block: calc(var(--spacing) * 3);
   }
+  .py-16 {
+    padding-block: calc(var(--spacing) * 16);
+  }
   .py-\[4rem\] {
     padding-block: 4rem;
   }
   .py-\[7rem\] {
     padding-block: 7rem;
   }
+  .pt-3 {
+    padding-top: calc(var(--spacing) * 3);
+  }
   .pt-5 {
     padding-top: calc(var(--spacing) * 5);
   }
   .pb-5 {
     padding-bottom: calc(var(--spacing) * 5);
+  }
+  .text-center {
+    text-align: center;
   }
   .text-base {
     font-size: var(--text-base);
@@ -397,8 +424,14 @@
   .text-\[1\.875rem\] {
     font-size: 1.875rem;
   }
+  .text-\[2\.5rem\] {
+    font-size: 2.5rem;
+  }
   .text-\[4\.5rem\] {
     font-size: 4.5rem;
+  }
+  .text-\[10px\] {
+    font-size: 10px;
   }
   .leading-none {
     --tw-leading: 1;
