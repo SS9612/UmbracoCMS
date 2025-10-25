@@ -21,12 +21,12 @@
           integrity="sha512-2SwdPD6INVrV/lHTZbO2nodKhrnDdJK9/kg2XD1r9uGqPo1cUbujc+IYdlYdEErWNu69gVcYgdxlmVmzTWnetw=="
           crossorigin="anonymous"
           referrerpolicy="no-referrer">
-    <script src="https://cdn.tailwindcss.com"></script>
-
-    <link href="~/css/style.css" rel="stylesheet" asp-append-version="true" />
+    <link href="~/css/output.css" rel="stylesheet" asp-append-version="true" />
 </head>
 <body>
     <partial name="Partials/Layout/_Topbar"/>
+    <partial name="Partials/Layout/_Header" />
+
     @RenderBody()
 </body>
 </html>
