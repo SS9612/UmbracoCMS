@@ -1,0 +1,59 @@
+@inherits Umbraco.Cms.Web.Common.Views.UmbracoViewPage<Umbraco.Cms.Core.Models.Blocks.BlockListItem>
+@using ContentModels = Umbraco.Cms.Web.Common.PublishedModels;
+@{
+    var content = (ContentModels.SuccessStorySection)Model.Content;
+    var settings = Model.Settings;
+    
+    var bgColor = !string.IsNullOrWhiteSpace(content.SuccessStoryBgColor) ? content.SuccessStoryBgColor : "#4F5955";
+    
+    var customerStatsList = content.CustomerStat;
+}
+
+<section class="relative">
+    <div class="relative py-16" style="background-color: @bgColor;">
+        <div class="max-w-7xl mx-auto px-4 relative">
+            @if (content.SuccessStoryBgImage != null)
+            {
+                <div class="absolute left-0 right-0 top-0 opacity-20 flex items-center justify-center overflow-hidden">
+                    <img src="@content.SuccessStoryBgImage.Url()" style="width: 1280px; object-fit: cover;" alt="Background pattern" />
+                </div>
+            }
+            
+            <div class="relative z-10">
+                <div class="flex flex-col gap-2 items-center text-center" style="margin-bottom: 20px;">
+                    @if (content.SuccessStoryTitle != null)
+                    {
+                        <div class="text-white text-4xl font-bold">
+                            @Html.Raw(content.SuccessStoryTitle)
+                        </div>
+                    }
+                </div>
+                
+                <div class="grid grid-cols-3 gap-5">
+                    @if (customerStatsList != null && customerStatsList.Any())
+                    {
+                        @foreach (var item in customerStatsList)
+                        {
+                            var stat = (ContentModels.CustomerStat)item.Content;
+                            <div class="flex flex-col items-center text-center">
+                                <div class="rte">@Html.Raw(stat.CustomerStats)</div>
+                            </div>
+                        }
+                    }
+                    else
+                    {
+                        <p class="text-white col-span-3">No statistics available</p>
+                    }
+                </div>
+                
+                @if (content.SuccessStoryImg != null)
+                {
+                    <div style="margin-top: 72px;">
+                        <img src="@content.SuccessStoryImg.Url()" class="w-full h-auto object-cover" alt="Success story team" />
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</section>
+
