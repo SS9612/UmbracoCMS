@@ -10,7 +10,7 @@
 }
 
 <section class="relative">
-    <div class="relative py-16" style="background-color: @bgColor;">
+    <div class="relative" style="background-color: @bgColor; padding-top: 4rem; padding-bottom: 24rem;">
         <div class="max-w-7xl mx-auto px-4 relative">
             @if (content.SuccessStoryBgImage != null)
             {
@@ -45,15 +45,19 @@
                         <p class="text-white col-span-3">No statistics available</p>
                     }
                 </div>
-                
-                @if (content.SuccessStoryImg != null)
-                {
-                    <div style="margin-top: 72px;">
-                        <img src="@content.SuccessStoryImg.Url()" class="w-full h-auto object-cover" alt="Success story team" />
-                    </div>
-                }
             </div>
         </div>
     </div>
+    
+    @if (content.SuccessStoryImg != null)
+    {
+        <div style="margin-top: -350px; position: relative; z-index: 1;">
+            <div class="max-w-7xl mx-auto">
+                <img src="@content.SuccessStoryImg.Url()" 
+                     style="width: 970px !important; height: 544px !important; object-fit: cover; margin-left: auto; margin-right: auto; display: block;"
+                     alt="Success story team" />
+            </div>
+        </div>
+    }
 </section>
 
