@@ -17,9 +17,12 @@
 		<div class="w-5/12 flex flex-col gap-8">
 			<h1 class="text-[4.5rem] text-primary font-bold leading-none">@content.HeroTitle</h1>
 			<div class="rte">@Html.Raw(content.HeroText)</div>
-			@if (content.HeroLink != null)
+			@{
+				var link = content.HeroLink?.FirstOrDefault();
+			}
+			@if (link != null)
 			{
-				<a class="bg-primary text-white py-3 px-10 no-underline rounded cursor-pointer self-start font-bold" href="@content.HeroLink Url">@content.HeroLink</a>
+				<a class="bg-primary text-white py-3 px-10 no-underline rounded cursor-pointer self-start font-bold" href="@link.Url" target="@(link.Target)" rel="@(link.Target == "_blank" ? "noopener" : null)">@link.Name</a>
 			}
 		</div>
 	</div>
