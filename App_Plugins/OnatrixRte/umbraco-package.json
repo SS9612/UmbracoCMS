@@ -164,11 +164,77 @@
           ]
         },
         {
+          "label": "Headings",
+          "items": [
+            {
+              "label": "H1 - 70/80 Bold",
+              "data": {
+                "tag": "h1",
+                "class": "rte-h1"
+              },
+              "appearance": {}
+            },
+            {
+              "label": "H2 - 40/50 Bold",
+              "data": {
+                "tag": "h2",
+                "class": "rte-h2"
+              },
+              "appearance": {}
+            },
+            {
+              "label": "H3 - 18/27 Bold",
+              "data": {
+                "tag": "h3",
+                "class": "rte-h3"
+              },
+              "appearance": {}
+            }
+          ]
+        },
+        {
           "label": "Bullets",
           "data": {
             "tag": "ul",
             "class": "rte-ul"
           }
+        },
+        {
+          "label": "Images",
+          "items": [
+            {
+              "label": "25% width",
+              "data": {
+                "tag": "img",
+                "class": "rte-img-25"
+              },
+              "appearance": {}
+            },
+            {
+              "label": "50% width",
+              "data": {
+                "tag": "img",
+                "class": "rte-img-50"
+              },
+              "appearance": {}
+            },
+            {
+              "label": "75% width",
+              "data": {
+                "tag": "img",
+                "class": "rte-img-75"
+              },
+              "appearance": {}
+            },
+            {
+              "label": "100% width",
+              "data": {
+                "tag": "img",
+                "class": "rte-img-100"
+              },
+              "appearance": {}
+            }
+          ]
         }
       ]
     },
@@ -213,6 +279,22 @@
             "class": "text-body-text-100"
           },
           "appearance": { "style": "background-color:#999999; color:#fff; padding:5px;" }
+        },
+        {
+          "label": "Accent",
+          "data": {
+            "tag": "span",
+            "class": "text-accent"
+          },
+          "appearance": { "style": "background-color:#F2EDDC; color:#0E0E0E; padding:5px;" }
+        },
+        {
+          "label": "White",
+          "data": {
+            "tag": "span",
+            "class": "text-neutral"
+          },
+          "appearance": { "style": "background-color:#FFFFFF; color:#0E0E0E; padding:5px;" }
         }
       ]
     }

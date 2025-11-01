@@ -54,3 +54,88 @@ body {
 img {
     @apply w-full h-auto object-cover;
 }
+
+.rte img.rte-img-25 {
+    width: 25% !important;
+    max-width: 25% !important;
+    height: auto !important;
+    object-fit: contain !important;
+    display: inline-block;
+}
+
+.rte img.rte-img-50 {
+    width: 50% !important;
+    max-width: 50% !important;
+    height: auto !important;
+    object-fit: contain !important;
+    display: inline-block;
+}
+
+.rte img.rte-img-75 {
+    width: 75% !important;
+    max-width: 75% !important;
+    height: auto !important;
+    object-fit: contain !important;
+    display: inline-block;
+}
+
+.rte img.rte-img-100 {
+    width: 100% !important;
+    max-width: 100% !important;
+    height: auto !important;
+    object-fit: contain !important;
+    display: inline-block;
+}
+
+.rte .rte-h1 {
+    font-size: 70px;
+    line-height: 80px;
+    font-weight: 700;
+    color: var(--color-primary);
+}
+
+.rte .rte-h2 {
+    font-size: 40px;
+    line-height: 50px;
+    font-weight: 700;
+    color: var(--color-primary);
+}
+
+.rte .rte-h3 {
+    font-size: 18px;
+    line-height: 27px;
+    font-weight: 700;
+    color: var(--color-primary);
+}
+
+.about-callback-rte img {
+    width: 25% !important;
+    max-width: 25% !important;
+    height: auto !important;
+    object-fit: contain !important;
+    display: inline-block;
+}
+
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border-width: 0;
+}
+
+.form-btn {
+    @apply w-full bg-accent text-dark text-center font-bold rounded-md cursor-pointer select-none py-3 px-12 text-[1.125rem];
+}
+
+.input-validation-error {
+    @apply border-red-500 focus:ring-1 focus:ring-red-500;
+}
+
+.field-validation-error {
+    @apply mt-1 block text-sm text-red-600;
+}
