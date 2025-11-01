@@ -1,0 +1,58 @@
+@inherits Umbraco.Cms.Web.Common.Views.UmbracoViewPage<Umbraco.Cms.Core.Models.Blocks.BlockListItem>
+@using ContentModels = Umbraco.Cms.Web.Common.PublishedModels;
+@{
+    var content = (ContentModels.ChooseUsSection)Model.Content;
+    var settings = Model.Settings as ContentModels.ChooseUsSettings;
+}
+
+<section class="relative">
+    
+    <div class="relative py-[4rem]">
+        <div class="max-w-7xl mx-auto px-4 relative">
+            @if (content.ChooseUsBgImage != null)
+            {
+                <div class="absolute inset-0 opacity-20 flex items-center justify-center overflow-hidden" style="transform: translateY(85px);">
+                    <img src="@content.ChooseUsBgImage.Url()" style="width: 1280px; object-fit: cover;" alt="Background pattern" />
+                </div>
+            }
+            
+            <div class="relative z-10">
+                <div class="flex flex-col gap-2 items-center text-center">
+                    @if (content.ChooseUsTitle != null)
+                    {
+                        <div class="choose-us-title">
+                            <h3>@Html.Raw(content.ChooseUsTitle)</h3>
+                        </div>
+                    }
+                    
+                    @if (!string.IsNullOrWhiteSpace(content.ChooseUsText))
+                    {
+                        <p style="color: #535656; margin-top: 30px; margin-bottom: 35px; max-width: 600px;" class="text-base">@content.ChooseUsText</p>
+                    }
+                    
+                    @{
+                        var link = content.ChooseUsLink?.FirstOrDefault();
+                    }
+                    @if (link != null)
+                    {
+                        <a class="bg-primary text-white py-3 px-10 no-underline rounded cursor-pointer font-bold" 
+                           href="@link.Url" 
+                           target="@(link.Target)" 
+                           rel="@(link.Target == "_blank" ? "noopener" : null)">
+                            @link.Name
+                        </a>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Bottom Section: Team Photo -->
+    @if (content.ChooseUsImg != null)
+    {
+        <div class="max-w-7xl mx-auto px-4 mt-[90px]">
+            <img src="@content.ChooseUsImg.Url()" class="w-full h-auto object-cover" alt="Team photo" />
+        </div>
+    }
+</section>
+

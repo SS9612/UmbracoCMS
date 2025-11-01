@@ -108,6 +108,12 @@ img {
     color: var(--color-primary);
 }
 
+.choose-us-title h3 {
+    font-size: 4rem !important;
+    color: white !important;
+    font-weight: 700;
+}
+
 .about-callback-rte img {
     width: 25% !important;
     max-width: 25% !important;
