@@ -1,0 +1,28 @@
+@inherits Umbraco.Cms.Web.Common.Views.UmbracoViewPage
+@using Umbraco.Cms.Web.Common.PublishedModels
+
+@{
+    var rootContent = Umbraco.ContentAtRoot();
+    var siteSettings = rootContent.OfType<SiteSettings>().FirstOrDefault();
+
+    var siteName = siteSettings?.SiteName ?? "Onatrix";
+    var creditsText = siteSettings?.FooterCreditsText ?? "Credits to Themesflat";
+}
+
+<footer class="border-t border-b border-body-text-100 flex items-center justify-center" style="background-color: var(--color-dark); height: 64px;">
+    <div class="max-w-7xl w-full px-4">
+        <p class="text-left text-sm text-body-text-100 pl-[33%]">
+            © @siteName. All Rights Reserved. 
+            @if (creditsText.Contains("Themesflat"))
+            {
+                var parts = creditsText.Split(new[] { "Themesflat" }, StringSplitOptions.None);
+                @parts[0]<span class="text-secondary">Themesflat</span>@(parts.Length > 1 ? parts[1] : "")
+            }
+            else
+            {
+                @creditsText
+            }
+        </p>
+    </div>
+</footer>
+
