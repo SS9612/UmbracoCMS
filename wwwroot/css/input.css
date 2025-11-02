@@ -122,6 +122,31 @@ img {
     display: inline-block;
 }
 
+.about-team-member-section .about-team-member-img {
+    width: 100% !important;
+    flex-shrink: 0;
+}
+
+.about-team-member-section .about-team-member-img img,
+section.about-team-member-section .about-team-member-img img {
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 100% !important;
+    height: auto !important;
+    display: block !important;
+    object-fit: cover !important;
+    box-sizing: border-box !important;
+}
+
+.about-team-member-section .rte {
+    line-height: 1.8 !important;
+}
+
+.about-team-member-section .rte p {
+    margin-bottom: 1.5rem !important;
+    line-height: 1.8 !important;
+}
+
 .sr-only {
     position: absolute;
     width: 1px;
