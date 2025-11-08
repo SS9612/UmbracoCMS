@@ -1,4 +1,5 @@
 ﻿@import "tailwindcss";
+@import "style.css";
 
 @theme {
     --color-neutral: #ffffff;
@@ -174,7 +175,6 @@ section.about-contact-section .about-contact-img img {
     position: absolute !important;
 }
 
-/* Dots pattern background layer */
 .about-contact-images-container > div[style*="z-index: 1"] img {
     width: 100% !important;
     height: 100% !important;
@@ -182,14 +182,12 @@ section.about-contact-section .about-contact-img img {
     display: block !important;
 }
 
-/* Rectangle shape middle layer */
 .about-contact-images-container > div[style*="z-index: 2"] img {
     display: block !important;
     max-width: 100% !important;
     height: auto !important;
 }
 
-/* Person foreground layer */
 .about-contact-images-container > div[style*="z-index: 3"] img {
     height: 100% !important;
     width: auto !important;
@@ -230,3 +228,4 @@ section.about-contact-section .about-contact-img img {
 .field-validation-error {
     @apply mt-1 block text-sm text-red-600;
 }
+

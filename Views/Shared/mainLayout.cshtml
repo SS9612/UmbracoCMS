@@ -21,7 +21,12 @@
           integrity="sha512-2SwdPD6INVrV/lHTZbO2nodKhrnDdJK9/kg2XD1r9uGqPo1cUbujc+IYdlYdEErWNu69gVcYgdxlmVmzTWnetw=="
           crossorigin="anonymous"
           referrerpolicy="no-referrer">
+
+    <link rel="stylesheet"
+          href="https://cdn.jsdelivr.net/npm/swiper@12/swiper-bundle.min.css" />
     <link href="~/css/output.css" rel="stylesheet" asp-append-version="true" />
+    <link href="~/css/swiper.css" rel="stylesheet" asp-append-version="true" />
+
 </head>
 <body>
     <partial name="Partials/Layout/_Topbar"/>
@@ -34,7 +39,10 @@
         <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.3/jquery.validate.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validation-unobtrusive/3.2.12/jquery.validate.unobtrusive.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/swiper@12/swiper-bundle.min.js"></script>
         <script src="~/js/form.js" ></script>
+        <script src="~/js/swiper.js"></script>
+
         @RenderSection("Scripts", required: false)
 </body>
 </html>
