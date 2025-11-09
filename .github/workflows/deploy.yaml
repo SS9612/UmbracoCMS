@@ -18,13 +18,13 @@ jobs:
           dotnet-version: '9.x'
 
       - name: Restore
-        run: dotnet restore
+        run: dotnet restore UmbracoCMS/UmbracoCMS.csproj
 
       - name: Build
-        run: dotnet build --configuration Release --no-restore
+        run: dotnet build UmbracoCMS/UmbracoCMS.csproj --configuration Release --no-restore
 
       - name: Publish
-        run: dotnet publish --configuration Release --no-restore --output ${{github.workspace}}/publish
+        run: dotnet publish UmbracoCMS/UmbracoCMS.csproj --configuration Release --no-restore --output ${{github.workspace}}/publish
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
