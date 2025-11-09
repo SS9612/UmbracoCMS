@@ -40,12 +40,13 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: umbraco-app
+          path: ${{github.workspace}}
 
       - name: Show downloaded files
         run: |
           echo "Files in workspace:"
           dir
-          echo "Files in umbraco-app subfolder:"
+          echo "Files in downloaded folder:"
           dir umbraco-app
 
       - name: Deploy to Azure Web App
