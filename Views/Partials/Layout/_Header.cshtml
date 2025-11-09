@@ -29,7 +29,7 @@
         @if (logo != null)
         {
             <a href="/" class="flex-shrink-0">
-                <img src="@logo.Url()" alt="Onatrix" />
+                <img src="@logo.Url()" alt="@(siteSettings?.SiteName ?? "Onatrix")" />
             </a>
         }
         else

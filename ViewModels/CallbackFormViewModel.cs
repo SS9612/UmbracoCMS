@@ -26,5 +26,7 @@ namespace UmbracoCMS.ViewModels
 
         [BindNever]
         public IEnumerable<string> Options { get; set; } = [];
+
+        public string FormId { get; set; } = string.Empty;
     }
 }

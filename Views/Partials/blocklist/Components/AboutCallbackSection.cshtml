@@ -1,11 +1,66 @@
 ﻿@inherits Umbraco.Cms.Web.Common.Views.UmbracoViewPage<Umbraco.Cms.Core.Models.Blocks.BlockListItem>;
 @using ContentModels = Umbraco.Cms.Web.Common.PublishedModels;
 @using UmbracoCMS.ViewModels;
+@using Umbraco.Cms.Core.Models.PublishedContent;
+@using Umbraco.Extensions;
+@using System.Linq;
 
 @{
     var content = (ContentModels.AboutCallbackSection)Model.Content;
     var settings = Model.Settings as ContentModels.AboutCallbackSettings;
-    var formViewModel = new CallbackFormViewModel();
+
+    const string formScope = "about-callback";
+    var formViewModel = ViewData["CallbackFormModel"] as CallbackFormViewModel;
+    if (formViewModel == null || !string.Equals(formViewModel.FormId, formScope, System.StringComparison.OrdinalIgnoreCase))
+    {
+        formViewModel = new CallbackFormViewModel { FormId = formScope };
+    }
+    else
+    {
+        formViewModel.FormId = formScope;
+    }
+
+    var successId = TempData.Peek("CallbackFormSuccess") as string;
+    var successRecipient = TempData.Peek("CallbackFormRecipient") as string;
+    var showSuccess = !string.IsNullOrWhiteSpace(successId) && string.Equals(successId, formScope, System.StringComparison.OrdinalIgnoreCase);
+
+    var optionSource = settings?.CallbackRequestOptions?.Where(x => !string.IsNullOrWhiteSpace(x)).ToList() ?? [];
+    if (!optionSource.Any())
+    {
+        IEnumerable<IPublishedContent> servicePages = Enumerable.Empty<IPublishedContent>();
+        IEnumerable<IPublishedContent> serviceChildren = Enumerable.Empty<IPublishedContent>();
+        var currentPage = Umbraco.AssignedContentItem;
+#pragma warning disable 618
+        var root = currentPage?.Root();
+#pragma warning restore 618
+        if (root != null)
+        {
+            servicePages = root.ChildrenOfType(ContentModels.ServicePage.ModelTypeAlias) ?? Enumerable.Empty<IPublishedContent>();
+            var servicePage = servicePages.FirstOrDefault();
+            if (servicePage != null)
+            {
+                serviceChildren = servicePage.ChildrenOfType(ContentModels.ServiceDetail.ModelTypeAlias) ?? Enumerable.Empty<IPublishedContent>();
+            }
+        }
+
+        optionSource = serviceChildren
+            .Select(x => x.Name)
+            .Where(x => !string.IsNullOrWhiteSpace(x))
+            .Distinct(System.StringComparer.OrdinalIgnoreCase)
+            .ToList();
+    }
+
+    if (!optionSource.Any())
+    {
+        optionSource = new List<string> { "Financial consulting", "Business", "Tax planning" };
+    }
+
+    if (!formViewModel.Options.Any())
+    {
+        formViewModel.Options = optionSource;
+    }
+
+    var currentPageUrl = Context.Request.Path + Context.Request.QueryString;
 }
 
 <section class="py-28">
@@ -31,11 +86,9 @@
                 @content.AboutCallBackFormDescription
             </p>
 
-            @{
-                var currentPageUrl = Context.Request.Path + Context.Request.QueryString;
-            }
             <form action="/umbraco/surface/Form/HandleCallbackForm?returnUrl=@Uri.EscapeDataString(currentPageUrl)" method="post" id="callbackForm">
                 @Html.AntiForgeryToken()
+                <input type="hidden" name="FormId" value="@formViewModel.FormId" />
 
                 <div class="px-8 flex flex-col gap-6">
 
@@ -43,39 +96,59 @@
                         <div asp-validation-summary="ModelOnly" class="text-red-600 text-sm"></div>
                     </div>
 
+                    @if (showSuccess)
+                    {
+                        <div class="mx-6 rounded-[14px] border border-green-200 bg-green-50 px-4 py-3 text-sm text-green-700 shadow-sm">
+                            <strong class="text-green-800">Thank you@(string.IsNullOrWhiteSpace(successRecipient) ? string.Empty : $", {successRecipient}")!</strong>
+                            <span class="block">We have received your request and will be in touch shortly.</span>
+                        </div>
+                    }
+
                     <div style="padding-inline: 30px;">
-                        <label for="Name" class="sr-only">Name</label>
-                        <input id="Name" name="Name" type="text"
-                               placeholder="Name"
-                               class="w-full p-3 italic border border-border-gray rounded-md focus:ring-2 focus:ring-primary focus:outline-none" />
-                        <span class="field-validation-valid text-red-600 text-sm" data-valmsg-for="Name" data-valmsg-replace="true"></span>
+                        <label for="about-name" class="sr-only">Name</label>
+                        @Html.TextBox("Name", formViewModel.Name, new
+                        {
+                            @class = "w-full p-3 italic border border-border-gray rounded-md focus:ring-2 focus:ring-primary focus:outline-none",
+                            id = "about-name",
+                            placeholder = "Name"
+                        })
+                        @Html.ValidationMessage("Name", "", new { @class = "text-red-600 text-sm" })
                     </div>
 
                     <div style="padding-inline: 30px;">
-                        <label for="Email" class="sr-only">Email address</label>
-                        <input id="Email" name="Email" type="email"
-                               placeholder="Email address"
-                               class="w-full p-3 italic border border-border-gray rounded-md focus:ring-2 focus:ring-primary focus:outline-none" />
-                        <span class="field-validation-valid text-red-600 text-sm" data-valmsg-for="Email" data-valmsg-replace="true"></span>
+                        <label for="about-email" class="sr-only">Email address</label>
+                        @Html.TextBox("Email", formViewModel.Email, new
+                        {
+                            @class = "w-full p-3 italic border border-border-gray rounded-md focus:ring-2 focus:ring-primary focus:outline-none",
+                            id = "about-email",
+                            placeholder = "Email address",
+                            type = "email"
+                        })
+                        @Html.ValidationMessage("Email", "", new { @class = "text-red-600 text-sm" })
                     </div>
 
                     <div style="padding-inline: 30px;">
-                        <label for="Phone" class="sr-only">Phone</label>
-                        <input id="Phone" name="Phone" type="text"
-                               placeholder="Phone"
-                               class="w-full p-3 italic border border-border-gray rounded-md focus:ring-2 focus:ring-primary focus:outline-none" />
-                        <span class="field-validation-valid text-red-600 text-sm" data-valmsg-for="Phone" data-valmsg-replace="true"></span>
+                        <label for="about-phone" class="sr-only">Phone</label>
+                        @Html.TextBox("Phone", formViewModel.Phone, new
+                        {
+                            @class = "w-full p-3 italic border border-border-gray rounded-md focus:ring-2 focus:ring-primary focus:outline-none",
+                            id = "about-phone",
+                            placeholder = "Phone"
+                        })
+                        @Html.ValidationMessage("Phone", "", new { @class = "text-red-600 text-sm" })
                     </div>
 
                     <div style="padding-inline: 30px;">
-                        <label for="SelectedOption" class="sr-only"></label>
+                        <label for="SelectedOption" class="sr-only">Service interest</label>
                         <div class="relative">
                             <select id="SelectedOption" name="SelectedOption"
                                     class="appearance-none w-full p-3 pr-10 border border-border-gray focus:ring-2 focus:ring-primary focus:outline-none rounded-md">
                                 <option value="">Please select an option</option>
-                                <option value="Financial consulting">Financial consulting</option>
-                                <option value="Business">Business</option>
-                                <option value="Tax planning">Tax Planning</option>
+                                @foreach (var option in formViewModel.Options)
+                                {
+                                    var isSelected = string.Equals(formViewModel.SelectedOption, option, System.StringComparison.OrdinalIgnoreCase);
+                                    <option value="@option" selected="@(isSelected ? "selected" : null)">@option</option>
+                                }
                             </select>
 
                             <span class="pointer-events-none absolute right-3 inset-y-0 flex items-center">
@@ -85,7 +158,7 @@
                                 </svg>
                             </span>
                         </div>
-                        <span class="field-validation-valid text-red-600 text-sm" data-valmsg-for="SelectedOption" data-valmsg-replace="true"></span>
+                        @Html.ValidationMessage("SelectedOption", "", new { @class = "text-red-600 text-sm" })
                     </div>
 
                     <div class="pb-14" style="padding: 10px 30px 40px;">
