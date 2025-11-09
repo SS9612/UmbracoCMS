@@ -1,7 +1,13 @@
 ﻿@using Umbraco.Cms.Web.Common.PublishedModels;
+@using Umbraco.Cms.Core.Models.Blocks;
 @inherits Umbraco.Cms.Web.Common.Views.UmbracoViewPage<ContactPage>
 @{
     Layout = "~/Views/Shared/mainLayout.cshtml";
 }
 
 <partial name="Partials/Layout/_PageHeader" model="(IPageHeader)Model" />
+
+@if (Model.AboutContactSection is { Count: > 0 })
+{
+    @Html.GetBlockListHtml(Model.AboutContactSection)
+}

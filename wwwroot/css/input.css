@@ -1,5 +1,5 @@
 ﻿@import "tailwindcss";
-@import "style.css";
+@import "./style.css";
 
 @theme {
     --color-neutral: #ffffff;

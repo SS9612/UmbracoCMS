@@ -1,4 +1,5 @@
 ﻿@using Umbraco.Cms.Web.Common.PublishedModels;
+@using Umbraco.Cms.Core.Models.Blocks;
 @inherits Umbraco.Cms.Web.Common.Views.UmbracoViewPage<ServiceDetail>
 @{
     Layout = "~/Views/Shared/mainLayout.cshtml";
@@ -21,4 +22,12 @@
         </div>
     </div>
 </section>
+
+@{
+    var sections = Model.Value<BlockListModel>("sections");
+}
+@if (sections is { Count: > 0 })
+{
+    @Html.GetBlockListHtml(sections)
+}
 
