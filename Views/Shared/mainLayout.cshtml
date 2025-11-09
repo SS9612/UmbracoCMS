@@ -6,7 +6,30 @@
     var siteSettings = rootContent.OfType<SiteSettings>().FirstOrDefault();
 
     var siteName = siteSettings?.SiteName ?? "Onatrix";
-    var title = Model.Level == 1 ? $"{siteName}" : $"{siteName} | {Model.Name}";
+    var titleSuffix = siteSettings?.Value<string>("seoTitleSuffix");
+    var explicitSeoTitle = Model.Value<string>("seoTitle");
+    var baseTitle = !string.IsNullOrWhiteSpace(explicitSeoTitle)
+        ? explicitSeoTitle
+        : (Model.Level == 1 ? (Model.Name ?? siteName) : Model.Name ?? siteName);
+    var documentTitle = !string.IsNullOrWhiteSpace(titleSuffix)
+        ? $"{baseTitle} {titleSuffix}"
+        : baseTitle;
+
+    var seoDescription = Model.Value<string>("seoDescription");
+    if (string.IsNullOrWhiteSpace(seoDescription))
+    {
+        seoDescription = siteSettings?.Value<string>("defaultSeoDescription") ?? string.Empty;
+    }
+
+    var seoImage = Model.Value<Umbraco.Cms.Core.Models.MediaWithCrops>("seoImage")
+        ?? siteSettings?.Value<Umbraco.Cms.Core.Models.MediaWithCrops>("defaultSeoImage");
+
+    var seoImageUrl = seoImage?.GetCropUrl(width: 1200, height: 630) ?? seoImage?.Url();
+
+    var noIndex = Model.Value<bool>("seoNoIndex");
+
+    var request = Context.Request;
+    var absoluteUrl = $"{request.Scheme}://{request.Host}{request.PathBase}{request.Path}{request.QueryString}";
 }
 
 <!DOCTYPE html>
@@ -14,7 +37,27 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@title</title>
+    <title>@documentTitle</title>
+    @if (!string.IsNullOrWhiteSpace(seoDescription))
+    {
+        <meta name="description" content="@seoDescription" />
+    }
+    <meta property="og:title" content="@documentTitle" />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="@absoluteUrl" />
+    @if (!string.IsNullOrWhiteSpace(seoDescription))
+    {
+        <meta property="og:description" content="@seoDescription" />
+    }
+    @if (!string.IsNullOrWhiteSpace(seoImageUrl))
+    {
+        <meta property="og:image" content="@seoImageUrl" />
+    }
+    @if (noIndex)
+    {
+        <meta name="robots" content="noindex, nofollow" />
+    }
+    <link rel="canonical" href="@absoluteUrl" />
 
     <link rel="stylesheet"
           href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css"
