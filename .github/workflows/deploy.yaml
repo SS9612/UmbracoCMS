@@ -40,19 +40,19 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: umbraco-app
-          path: ${{github.workspace}}
+          path: ${{ github.workspace }}/deploy
 
       - name: Show downloaded files
         run: |
           echo "Files in workspace:"
           dir
           echo "Files in downloaded folder:"
-          dir umbraco-app
+          dir deploy
 
       - name: Deploy to Azure Web App
         uses: azure/webapps-deploy@v3
         with:
           app-name: onatrixss
           publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
-          package: umbraco-app
+          package: deploy
 
