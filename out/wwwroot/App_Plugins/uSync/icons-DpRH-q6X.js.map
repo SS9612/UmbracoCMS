@@ -1,0 +1,1 @@
+{"version":3,"file":"icons-DpRH-q6X.js","sources":["../../../usync-assets/src/icons/icons.ts"],"sourcesContent":["export default [\r\n\t{\r\n\t\tname: 'usync-logo',\r\n\t\tpath: () => import('./svg/logo.js'),\r\n\t},\r\n];\r\n"],"names":["icons"],"mappings":"AAAA,MAAeA,IAAA;AAAA,EACd;AAAA,IACC,MAAM;AAAA,IACN,MAAM,MAAM,OAAO,oBAAe;AAAA,EACnC;AACD;"}

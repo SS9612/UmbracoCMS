@@ -1,0 +1,72 @@
+@inherits Umbraco.Cms.Web.Common.Views.UmbracoViewPage
+@using Umbraco.Cms.Web.Common.PublishedModels
+
+@{
+    var rootContent = Umbraco.ContentAtRoot();
+    var siteSettings = rootContent.OfType<SiteSettings>().FirstOrDefault();
+
+    var siteName = siteSettings?.SiteName ?? "Onatrix";
+    var creditsText = (siteSettings?.FooterCreditsText ?? "Credits to Themesflat")?.Trim();
+    var creditsUrl = siteSettings?.FooterCreditsUrl;
+    var copyrightText = $"© {siteName}. All Rights Reserved.";
+    var sanitizedCredits = creditsText;
+
+    if (!string.IsNullOrWhiteSpace(sanitizedCredits)
+        && sanitizedCredits.StartsWith(copyrightText, StringComparison.OrdinalIgnoreCase))
+    {
+        sanitizedCredits = sanitizedCredits.Substring(copyrightText.Length).TrimStart(' ', '.', '-', '–');
+    }
+
+    sanitizedCredits = sanitizedCredits?.Trim();
+
+    var showCredits = !string.IsNullOrWhiteSpace(sanitizedCredits);
+}
+
+<footer class="border-t border-b border-body-text-100 flex items-center justify-center" style="background-color: var(--color-dark); height: 64px;">
+    <div class="max-w-7xl w-full px-4">
+        <p class="text-left text-sm text-body-text-100 pl-[33%]">
+            @copyrightText
+            @if (showCredits)
+            {
+                @Html.Raw(" ")
+
+                var themeToken = "Themesflat";
+                var hasThemeToken = sanitizedCredits.Contains(themeToken, StringComparison.OrdinalIgnoreCase);
+                var themeTokenIndex = hasThemeToken
+                    ? sanitizedCredits.IndexOf(themeToken, StringComparison.OrdinalIgnoreCase)
+                    : -1;
+
+                var beforeToken = hasThemeToken && themeTokenIndex > -1
+                    ? sanitizedCredits[..themeTokenIndex]
+                    : sanitizedCredits;
+
+                var afterToken = hasThemeToken && themeTokenIndex > -1
+                    ? sanitizedCredits[(themeTokenIndex + themeToken.Length)..]
+                    : string.Empty;
+
+                if (!string.IsNullOrWhiteSpace(creditsUrl))
+                {
+                    if (hasThemeToken && themeTokenIndex > -1)
+                    {
+                        @Html.Raw(beforeToken)
+                        <a class="text-secondary hover:underline" href="@creditsUrl" target="_blank" rel="noopener">@themeToken</a>
+                        @Html.Raw(afterToken)
+                    }
+                    else
+                    {
+                        <a class="text-secondary hover:underline" href="@creditsUrl" target="_blank" rel="noopener">@sanitizedCredits</a>
+                    }
+                }
+                else if (hasThemeToken && themeTokenIndex > -1)
+                {
+                    @Html.Raw($"{beforeToken}<span class=\"text-secondary\">{themeToken}</span>{afterToken}")
+                }
+                else
+                {
+                    @sanitizedCredits
+                }
+            }
+        </p>
+    </div>
+</footer>
+

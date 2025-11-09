@@ -49,6 +49,11 @@ jobs:
           echo "Files in downloaded folder:"
           dir deploy
 
+      - name: Ensure media folder exists
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Force -Path "${{ github.workspace }}/deploy/wwwroot/media" | Out-Null
+
       - name: Create deployment package
         shell: pwsh
         run: |
