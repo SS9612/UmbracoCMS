@@ -480,4 +480,5 @@ umbraco-package-schema.json
 
 # Media files
 /wwwroot/media/
+!/wwwroot/media/.gitkeep
 out/
