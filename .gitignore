@@ -478,7 +478,6 @@ umbraco-package-schema.json
 # Log files
 /umbraco/Logs/
 
-# Media files
-/wwwroot/media/
+!/wwwroot/media/
 !/wwwroot/media/.gitkeep
-out/
+!out/
