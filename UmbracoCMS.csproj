@@ -26,7 +26,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Content Include="web.config" CopyToPublishDirectory="Always" />
+    <Content Update="web.config" CopyToPublishDirectory="Always" />
     <Content Include="wwwroot\media\**\*.*" CopyToPublishDirectory="PreserveNewest" />
   </ItemGroup>
 
