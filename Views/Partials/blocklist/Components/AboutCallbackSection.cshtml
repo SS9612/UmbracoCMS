@@ -24,41 +24,9 @@
     var successRecipient = TempData.Peek("CallbackFormRecipient") as string;
     var showSuccess = !string.IsNullOrWhiteSpace(successId) && string.Equals(successId, formScope, System.StringComparison.OrdinalIgnoreCase);
 
-    var optionSource = settings?.CallbackRequestOptions?.Where(x => !string.IsNullOrWhiteSpace(x)).ToList() ?? [];
-    if (!optionSource.Any())
-    {
-        IEnumerable<IPublishedContent> servicePages = Enumerable.Empty<IPublishedContent>();
-        IEnumerable<IPublishedContent> serviceChildren = Enumerable.Empty<IPublishedContent>();
-        var currentPage = Umbraco.AssignedContentItem;
-#pragma warning disable 618
-        var root = currentPage?.Root();
-#pragma warning restore 618
-        if (root != null)
-        {
-            servicePages = root.ChildrenOfType(ContentModels.ServicePage.ModelTypeAlias) ?? Enumerable.Empty<IPublishedContent>();
-            var servicePage = servicePages.FirstOrDefault();
-            if (servicePage != null)
-            {
-                serviceChildren = servicePage.ChildrenOfType(ContentModels.ServiceDetail.ModelTypeAlias) ?? Enumerable.Empty<IPublishedContent>();
-            }
-        }
+    var optionSource = new List<string> { "Business", "Financial Consulting", "Tax Planning" };
 
-        optionSource = serviceChildren
-            .Select(x => x.Name)
-            .Where(x => !string.IsNullOrWhiteSpace(x))
-            .Distinct(System.StringComparer.OrdinalIgnoreCase)
-            .ToList();
-    }
-
-    if (!optionSource.Any())
-    {
-        optionSource = new List<string> { "Financial consulting", "Business", "Tax planning" };
-    }
-
-    if (!formViewModel.Options.Any())
-    {
-        formViewModel.Options = optionSource;
-    }
+    formViewModel.Options = optionSource;
 
     var currentPageUrl = Context.Request.Path + Context.Request.QueryString;
 }
