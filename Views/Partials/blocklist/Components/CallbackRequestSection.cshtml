@@ -57,21 +57,9 @@
         }
     }
 
-    var serviceOptions = serviceChildren
-        .Select(x => x.Name)
-        .Where(x => !string.IsNullOrWhiteSpace(x))
-        .Distinct(System.StringComparer.OrdinalIgnoreCase)
-        .ToList();
+    var serviceOptions = new List<string> { "Business", "Financial Consulting", "Tax Planning" };
 
-    if (!serviceOptions.Any())
-    {
-        serviceOptions = new List<string> { "Financial consulting", "Business", "Tax planning" };
-    }
-
-    if (!formModel.Options.Any())
-    {
-        formModel.Options = serviceOptions;
-    }
+    formModel.Options = serviceOptions;
 
     if (string.IsNullOrWhiteSpace(formModel.SelectedOption) && formModel.Options.Any())
     {
