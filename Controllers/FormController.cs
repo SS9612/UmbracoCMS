@@ -1,5 +1,4 @@
 ﻿using System;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.AspNetCore.Mvc;
@@ -38,10 +37,26 @@ namespace UmbracoCMS.Controllers
         private readonly IEmailSender _emailSender = emailSender;
         private readonly ILogger<FormController> _logger = logger;
 
+        [HttpGet]
+        public IActionResult HandleCallbackForm([FromQuery] string? returnUrl)
+        {
+            if (!string.IsNullOrEmpty(returnUrl) && Url.IsLocalUrl(returnUrl))
+            {
+                return Redirect(returnUrl);
+            }
+
+            return RedirectToCurrentUmbracoPage();
+        }
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> HandleCallbackForm(CallbackFormViewModel model, [FromQuery] string? returnUrl)
         {
+            if (model == null)
+            {
+                model = new CallbackFormViewModel();
+            }
+
             PopulateFormOptions(model);
 
             if (!ModelState.IsValid)
@@ -74,7 +89,12 @@ namespace UmbracoCMS.Controllers
 
         private void PopulateFormOptions(CallbackFormViewModel model)
         {
-            if (model.Options.Any())
+            if (model == null)
+            {
+                return;
+            }
+
+            if (model.Options != null && model.Options.Any())
             {
                 return;
             }
