@@ -8,7 +8,7 @@ builder.CreateUmbracoBuilder()
     .AddComposers()
     .Build();
 
-builder.Services.AddScoped<IFormSubmissionsService, FormSubmissionsService>();
+builder.Services.AddScoped<FormSubmissionsService>();
 
 WebApplication app = builder.Build();
 

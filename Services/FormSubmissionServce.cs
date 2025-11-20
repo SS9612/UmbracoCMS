@@ -7,13 +7,13 @@ namespace UmbracoCMS.Services
     {
         private readonly IContentService _contentService = contentService;
 
-        public Task<bool> SaveCallbackRequestAsync(CallbackFormViewModel model)
+        public bool SaveCallbackRequest(CallbackFormViewModel model)
         {
             try
             {
                 var container = _contentService.GetRootContent().FirstOrDefault(x => x.ContentType.Alias == "formSubmissions");
                 if (container == null)
-                    return Task.FromResult(false);
+                    return false;
 
                 var requestName = $"{DateTime.Now:yyyy-MM-dd HH:mm} - {model.Name}";
                 var request = _contentService.Create(requestName, container, "callbackRequest");
@@ -24,7 +24,7 @@ namespace UmbracoCMS.Services
                 request.SetValue("callbackRequestOption", model.SelectedOption ?? string.Empty);
 
                 var saveResult = _contentService.Save(request);
-                return Task.FromResult(saveResult.Success);
+                return saveResult.Success;
             }
             catch (Exception ex)
             {
@@ -32,7 +32,12 @@ namespace UmbracoCMS.Services
                 Console.WriteLine($"Stack trace: {ex.StackTrace}");
             }
 
-            return Task.FromResult(false);
+            return false;
+        }
+
+        public Task<bool> SaveCallbackRequestAsync(CallbackFormViewModel model)
+        {
+            return Task.FromResult(SaveCallbackRequest(model));
         }
     }
 }
