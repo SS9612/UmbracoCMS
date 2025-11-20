@@ -21,15 +21,10 @@
         formViewModel.FormId = formScope;
     }
 
-    var successId = TempData.Peek("CallbackFormSuccess") as string;
-    var successRecipient = TempData.Peek("CallbackFormRecipient") as string;
-    var showSuccess = !string.IsNullOrWhiteSpace(successId) && string.Equals(successId, formScope, System.StringComparison.OrdinalIgnoreCase);
 
     var optionSource = new List<string> { "Business", "Financial Consulting", "Tax Planning" };
 
     formViewModel.Options = optionSource;
-
-    var currentPageUrl = Context.Request.Path + Context.Request.QueryString;
 }
 
 <section class="py-28">
@@ -58,15 +53,6 @@
             @{
                 var formError = TempData.Peek("FormError") as string;
                 var formSuccess = TempData.Peek("FormSuccess") as string;
-                var formValidationErrors = TempData.Peek("FormValidationErrors") as string;
-            }
-
-            @if (!string.IsNullOrWhiteSpace(formValidationErrors))
-            {
-                <div class="mx-6 mb-4 rounded-[14px] border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700 shadow-sm">
-                    <strong class="text-red-800">Validation errors:</strong>
-                    <span class="block">@formValidationErrors</span>
-                </div>
             }
 
             @if (!string.IsNullOrWhiteSpace(formError))
@@ -94,14 +80,6 @@
                     <div>
                         <div asp-validation-summary="ModelOnly" class="text-red-600 text-sm"></div>
                     </div>
-
-                    @if (showSuccess)
-                    {
-                        <div class="mx-6 rounded-[14px] border border-green-200 bg-green-50 px-4 py-3 text-sm text-green-700 shadow-sm">
-                            <strong class="text-green-800">Thank you@(string.IsNullOrWhiteSpace(successRecipient) ? string.Empty : $", {successRecipient}")!</strong>
-                            <span class="block">We have received your request and will be in touch shortly.</span>
-                        </div>
-                    }
 
                     <div style="padding-inline: 30px;">
                         <label for="about-name" class="sr-only">Name</label>
