@@ -1,6 +1,7 @@
 ﻿@inherits Umbraco.Cms.Web.Common.Views.UmbracoViewPage<Umbraco.Cms.Core.Models.Blocks.BlockListItem>;
 @using ContentModels = Umbraco.Cms.Web.Common.PublishedModels;
 @using UmbracoCMS.ViewModels;
+@using UmbracoCMS.Controllers;
 @using Umbraco.Cms.Core.Models.PublishedContent;
 @using Umbraco.Extensions;
 @using System.Linq;
@@ -54,7 +55,8 @@
                 @content.AboutCallBackFormDescription
             </p>
 
-            <form action="/umbraco/surface/Form/HandleCallbackForm?returnUrl=@Uri.EscapeDataString(currentPageUrl)" method="post" id="callbackForm">
+            @using (Html.BeginUmbracoForm<FormController>("HandleCallbackForm", new { returnUrl = currentPageUrl }, new { id = "callbackForm" }))
+            {
                 @Html.AntiForgeryToken()
                 <input type="hidden" name="FormId" value="@formViewModel.FormId" />
 
@@ -136,7 +138,7 @@
                     </div>
 
                 </div>
-            </form>
+            }
         </div>
 
     </div>
