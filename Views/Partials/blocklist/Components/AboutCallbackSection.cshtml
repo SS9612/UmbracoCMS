@@ -55,7 +55,27 @@
                 @content.AboutCallBackFormDescription
             </p>
 
-            @using (Html.BeginUmbracoForm<FormController>("HandleCallbackForm", new { returnUrl = currentPageUrl }, new { id = "callbackForm" }))
+            @{
+                var formError = TempData.Peek("FormError") as string;
+                var formSuccess = TempData.Peek("FormSuccess") as string;
+            }
+
+            @if (!string.IsNullOrWhiteSpace(formError))
+            {
+                <div class="mx-6 mb-4 rounded-[14px] border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700 shadow-sm">
+                    <strong class="text-red-800">Error:</strong>
+                    <span class="block">@formError</span>
+                </div>
+            }
+
+            @if (!string.IsNullOrWhiteSpace(formSuccess))
+            {
+                <div class="mx-6 mb-4 rounded-[14px] border border-green-200 bg-green-50 px-4 py-3 text-sm text-green-700 shadow-sm">
+                    <strong class="text-green-800">@formSuccess</strong>
+                </div>
+            }
+
+            @using (Html.BeginUmbracoForm<FormController>("HandleCallbackForm", new { }, new { id = "callbackForm" }))
             {
                 @Html.AntiForgeryToken()
                 <input type="hidden" name="FormId" value="@formViewModel.FormId" />
