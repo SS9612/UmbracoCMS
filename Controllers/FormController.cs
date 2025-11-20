@@ -17,7 +17,6 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using UmbracoCMS.ViewModels;
 using UmbracoCMS.Services;
-using UmbracoCMS.Filters;
 using ContentModels = Umbraco.Cms.Web.Common.PublishedModels;
 using Umbraco.Cms.Core.Models.PublishedContent;
 
@@ -49,28 +48,28 @@ namespace UmbracoCMS.Controllers
 
             if (!ModelState.IsValid)
             {
-                var errors = ModelState
-                    .Where(x => x.Value != null && x.Value.Errors.Count > 0)
-                    .SelectMany(x => x.Value!.Errors.Select(e => e.ErrorMessage ?? "Validation error"))
-                    .ToList();
+                //var errors = ModelState
+                //    .Where(x => x.Value != null && x.Value.Errors.Count > 0)
+                //    .SelectMany(x => x.Value!.Errors.Select(e => e.ErrorMessage ?? "Validation error"))
+                //    .ToList();
 
-                if (errors.Any())
-                {
-                    TempData["FormValidationErrors"] = string.Join(" ", errors);
-                }
+                //if (errors.Any())
+                //{
+                //    TempData["FormValidationErrors"] = string.Join(" ", errors);
+                //}
 
                 return CurrentUmbracoPage();
             }
 
-            try
-            {
-                PopulateFormOptions(model);
-            }
-            catch
-            {
-                model.Options = new[] { "Financial consulting", "Business consulting", "Tax planning" };
-                model.FormId = string.IsNullOrWhiteSpace(model.FormId) ? "callback-request" : model.FormId;
-            }
+            //try
+            //{
+            //    PopulateFormOptions(model);
+            //}
+            //catch
+            //{
+            //    model.Options = new[] { "Financial consulting", "Business consulting", "Tax planning" };
+            //    model.FormId = string.IsNullOrWhiteSpace(model.FormId) ? "callback-request" : model.FormId;
+            //}
 
             //var result = await _formSubmissions.SaveCallbackRequestAsync(model);
             //if (!result)
@@ -79,130 +78,130 @@ namespace UmbracoCMS.Controllers
             //    return RedirectToCurrentUmbracoPage();
             //}
 
-            try
-            {
-                await SendConfirmationEmailAsync(model);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Failed to send confirmation email");
-            }
+            //try
+            //{
+            //    await SendConfirmationEmailAsync(model);
+            //}
+            //catch (Exception ex)
+            //{
+            //    _logger.LogError(ex, "Failed to send confirmation email");
+            //}
 
-            TempData["FormSuccess"] = "Thank you! Your request has been received and we will get back to you soon";
-            TempData["CallbackFormSuccess"] = string.IsNullOrWhiteSpace(model.FormId) ? "callback-request" : model.FormId;
-            TempData["CallbackFormRecipient"] = model.Name ?? model.Email ?? string.Empty;
+            //TempData["FormSuccess"] = "Thank you! Your request has been received and we will get back to you soon";
+            //TempData["CallbackFormSuccess"] = string.IsNullOrWhiteSpace(model.FormId) ? "callback-request" : model.FormId;
+            //TempData["CallbackFormRecipient"] = model.Name ?? model.Email ?? string.Empty;
 
             return RedirectToCurrentUmbracoPage();
         }
 
-        private void PopulateFormOptions(CallbackFormViewModel model)
-        {
-            if (model == null)
-            {
-                return;
-            }
+        //        private void PopulateFormOptions(CallbackFormViewModel model)
+        //        {
+        //            if (model == null)
+        //            {
+        //                return;
+        //            }
 
-            if (model.Options != null && model.Options.Any())
-            {
-                return;
-            }
+        //            if (model.Options != null && model.Options.Any())
+        //            {
+        //                return;
+        //            }
 
-            try
-            {
-                var current = UmbracoContext?.PublishedRequest?.PublishedContent;
-                if (current != null)
-                {
-                    var root = current.Root();
-                    if (root != null)
-                    {
-                        var servicePages = root.ChildrenOfType(ContentModels.ServicePage.ModelTypeAlias)
-                            ?? Enumerable.Empty<IPublishedContent>();
-                        var servicePage = servicePages.FirstOrDefault();
-                        if (servicePage != null)
-                        {
-                            var serviceChildren = servicePage.ChildrenOfType(ContentModels.ServiceDetail.ModelTypeAlias)
-                                ?? Enumerable.Empty<IPublishedContent>();
+        //            try
+        //            {
+        //                var current = UmbracoContext?.PublishedRequest?.PublishedContent;
+        //                if (current != null)
+        //                {
+        //                    var root = current.Root();
+        //                    if (root != null)
+        //                    {
+        //                        var servicePages = root.ChildrenOfType(ContentModels.ServicePage.ModelTypeAlias)
+        //                            ?? Enumerable.Empty<IPublishedContent>();
+        //                        var servicePage = servicePages.FirstOrDefault();
+        //                        if (servicePage != null)
+        //                        {
+        //                            var serviceChildren = servicePage.ChildrenOfType(ContentModels.ServiceDetail.ModelTypeAlias)
+        //                                ?? Enumerable.Empty<IPublishedContent>();
 
-                            var serviceOptions = serviceChildren
-                                .Select(x => x.Name)
-                                .Where(x => !string.IsNullOrWhiteSpace(x))
-                                .Distinct(System.StringComparer.OrdinalIgnoreCase)
-                                .ToList();
+        //                            var serviceOptions = serviceChildren
+        //                                .Select(x => x.Name)
+        //                                .Where(x => !string.IsNullOrWhiteSpace(x))
+        //                                .Distinct(System.StringComparer.OrdinalIgnoreCase)
+        //                                .ToList();
 
-                            if (serviceOptions.Any())
-                            {
-                                model.Options = serviceOptions;
-                                model.FormId = string.IsNullOrWhiteSpace(model.FormId) ? "callback-request" : model.FormId;
-                                return;
-                            }
-                        }
-                    }
-                }
-            }
-            catch
-            {
-            }
+        //                            if (serviceOptions.Any())
+        //                            {
+        //                                model.Options = serviceOptions;
+        //                                model.FormId = string.IsNullOrWhiteSpace(model.FormId) ? "callback-request" : model.FormId;
+        //                                return;
+        //                            }
+        //                        }
+        //                    }
+        //                }
+        //            }
+        //            catch
+        //            {
+        //            }
 
-            model.Options = new[] { "Financial consulting", "Business consulting", "Tax planning" };
-            model.FormId = string.IsNullOrWhiteSpace(model.FormId) ? "callback-request" : model.FormId;
-        }
+        //            model.Options = new[] { "Financial consulting", "Business consulting", "Tax planning" };
+        //            model.FormId = string.IsNullOrWhiteSpace(model.FormId) ? "callback-request" : model.FormId;
+        //        }
 
-        private async Task SendConfirmationEmailAsync(CallbackFormViewModel model)
-        {
-            if (string.IsNullOrWhiteSpace(model.Email))
-            {
-                return;
-            }
+        //        private async Task SendConfirmationEmailAsync(CallbackFormViewModel model)
+        //        {
+        //            if (string.IsNullOrWhiteSpace(model.Email))
+        //            {
+        //                return;
+        //            }
 
-            string fromEmail = "stefan.m.strandberg@hotmail.com";
-            string fromName = "Onatrix";
+        //            string fromEmail = "stefan.m.strandberg@hotmail.com";
+        //            string fromName = "Onatrix";
 
-            try
-            {
-#pragma warning disable 618
-                var rootContent = UmbracoContext?.Content?.GetAtRoot() ?? Enumerable.Empty<IPublishedContent>();
-#pragma warning restore 618
-                var siteSettings = rootContent.OfType<ContentModels.SiteSettings>().FirstOrDefault();
-                if (siteSettings != null)
-                {
-                    fromEmail = !string.IsNullOrWhiteSpace(siteSettings.ContactEmail) ? siteSettings.ContactEmail : fromEmail;
-                    fromName = !string.IsNullOrWhiteSpace(siteSettings.SiteName) ? siteSettings.SiteName : fromName;
-                }
-            }
-            catch
-            {
-            }
+        //            try
+        //            {
+        //#pragma warning disable 618
+        //                var rootContent = UmbracoContext?.Content?.GetAtRoot() ?? Enumerable.Empty<IPublishedContent>();
+        //#pragma warning restore 618
+        //                var siteSettings = rootContent.OfType<ContentModels.SiteSettings>().FirstOrDefault();
+        //                if (siteSettings != null)
+        //                {
+        //                    fromEmail = !string.IsNullOrWhiteSpace(siteSettings.ContactEmail) ? siteSettings.ContactEmail : fromEmail;
+        //                    fromName = !string.IsNullOrWhiteSpace(siteSettings.SiteName) ? siteSettings.SiteName : fromName;
+        //                }
+        //            }
+        //            catch
+        //            {
+        //            }
 
-            var subject = $"{fromName} – we received your callback request";
-            var selectedService = string.IsNullOrWhiteSpace(model.SelectedOption) ? "N/A" : model.SelectedOption;
-            var body = $"""
-                <p>Hi {model.Name ?? "there"},</p>
-                <p>Thanks for reaching out to {fromName}. We've received your callback request and will be in touch shortly.</p>
-                <p><strong>Details</strong></p>
-                <ul>
-                    <li>Name: {model.Name}</li>
-                    <li>Phone: {model.Phone}</li>
-                    <li>Selected service: {selectedService}</li>
-                </ul>
-                <p>We look forward to speaking with you.</p>
-                <p>— {fromName}</p>
-                """;
+        //            var subject = $"{fromName} – we received your callback request";
+        //            var selectedService = string.IsNullOrWhiteSpace(model.SelectedOption) ? "N/A" : model.SelectedOption;
+        //            var body = $"""
+        //                <p>Hi {model.Name ?? "there"},</p>
+        //                <p>Thanks for reaching out to {fromName}. We've received your callback request and will be in touch shortly.</p>
+        //                <p><strong>Details</strong></p>
+        //                <ul>
+        //                    <li>Name: {model.Name}</li>
+        //                    <li>Phone: {model.Phone}</li>
+        //                    <li>Selected service: {selectedService}</li>
+        //                </ul>
+        //                <p>We look forward to speaking with you.</p>
+        //                <p>— {fromName}</p>
+        //                """;
 
-            var message = new EmailMessage(
-                fromEmail,
-                model.Email,
-                subject,
-                body,
-                true);
+        //            var message = new EmailMessage(
+        //                fromEmail,
+        //                model.Email,
+        //                subject,
+        //                body,
+        //                true);
 
-            try
-            {
-                await _emailSender.SendAsync(message, "callback-confirmation");
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Failed to send callback confirmation email to {Email}", model.Email);
-            }
-        }
+        //            try
+        //            {
+        //                await _emailSender.SendAsync(message, "callback-confirmation");
+        //            }
+        //            catch (Exception ex)
+        //            {
+        //                _logger.LogError(ex, "Failed to send callback confirmation email to {Email}", model.Email);
+        //            }
+        //        }
     }
 }
