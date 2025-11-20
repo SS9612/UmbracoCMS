@@ -58,6 +58,15 @@
             @{
                 var formError = TempData.Peek("FormError") as string;
                 var formSuccess = TempData.Peek("FormSuccess") as string;
+                var formValidationErrors = TempData.Peek("FormValidationErrors") as string;
+            }
+
+            @if (!string.IsNullOrWhiteSpace(formValidationErrors))
+            {
+                <div class="mx-6 mb-4 rounded-[14px] border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700 shadow-sm">
+                    <strong class="text-red-800">Validation errors:</strong>
+                    <span class="block">@formValidationErrors</span>
+                </div>
             }
 
             @if (!string.IsNullOrWhiteSpace(formError))

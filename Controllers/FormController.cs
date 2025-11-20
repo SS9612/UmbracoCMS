@@ -17,6 +17,7 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using UmbracoCMS.ViewModels;
 using UmbracoCMS.Services;
+using UmbracoCMS.Filters;
 using ContentModels = Umbraco.Cms.Web.Common.PublishedModels;
 using Umbraco.Cms.Core.Models.PublishedContent;
 
@@ -38,12 +39,27 @@ namespace UmbracoCMS.Controllers
         private readonly ILogger<FormController> _logger = logger;
 
         [HttpPost]
-        [ValidateAntiForgeryToken]
+        [SafeValidateAntiForgeryToken]
         public async Task<IActionResult> HandleCallbackForm(CallbackFormViewModel model)
         {
+            if (model == null)
+            {
+                model = new CallbackFormViewModel();
+            }
+
             if (!ModelState.IsValid)
             {
-                return CurrentUmbracoPage();
+                var errors = ModelState
+                    .Where(x => x.Value != null && x.Value.Errors.Count > 0)
+                    .SelectMany(x => x.Value!.Errors.Select(e => e.ErrorMessage ?? "Validation error"))
+                    .ToList();
+
+                if (errors.Any())
+                {
+                    TempData["FormValidationErrors"] = string.Join(" ", errors);
+                }
+
+                return RedirectToCurrentUmbracoPage();
             }
 
             try
