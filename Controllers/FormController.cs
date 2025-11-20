@@ -41,32 +41,69 @@ namespace UmbracoCMS.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> HandleCallbackForm(CallbackFormViewModel model, [FromQuery] string? returnUrl)
         {
-            if (model == null || !ModelState.IsValid)
+            // Early return for null model - avoid any processing
+            if (model == null)
             {
-                return Redirect("/");
+                return new RedirectResult("/", permanent: false);
             }
 
-            PopulateFormOptions(model);
+            // Early return for invalid model state - avoid any UmbracoContext access
+            if (!ModelState.IsValid)
+            {
+                return new RedirectResult("/", permanent: false);
+            }
+
+            // Only populate options if model is valid - this is safe now
+            try
+            {
+                PopulateFormOptions(model);
+            }
+            catch
+            {
+                // If PopulateFormOptions fails, use default options
+                model.Options = new[] { "Financial consulting", "Business consulting", "Tax planning" };
+                model.FormId = string.IsNullOrWhiteSpace(model.FormId) ? "callback-request" : model.FormId;
+            }
 
             var saveResult = await _formSubmissions.SaveCallbackRequestAsync(model);
 
             if (!saveResult)
             {
-                return Redirect("/");
+                return new RedirectResult("/", permanent: false);
             }
 
-            await SendConfirmationEmailAsync(model);
+            // Send email in background - don't let it block or cause issues
+            try
+            {
+                await SendConfirmationEmailAsync(model);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Failed to send confirmation email");
+            }
 
             TempData["CallbackFormSuccess"] = string.IsNullOrWhiteSpace(model.FormId) ? "callback-request" : model.FormId;
             TempData["CallbackFormRecipient"] = model.Name ?? model.Email ?? string.Empty;
 
-            if (!string.IsNullOrEmpty(returnUrl) && Url.IsLocalUrl(returnUrl))
+            // Validate returnUrl safely
+            string redirectUrl = "/";
+            if (!string.IsNullOrEmpty(returnUrl))
             {
-                return Redirect(returnUrl);
+                try
+                {
+                    if (Url.IsLocalUrl(returnUrl))
+                    {
+                        redirectUrl = returnUrl;
+                    }
+                }
+                catch
+                {
+                    // If URL validation fails, use default
+                    redirectUrl = "/";
+                }
             }
 
-            // Fallback to homepage
-            return Redirect("/");
+            return new RedirectResult(redirectUrl, permanent: false);
         }
 
         private void PopulateFormOptions(CallbackFormViewModel model)
@@ -81,24 +118,46 @@ namespace UmbracoCMS.Controllers
                 return;
             }
 
-            var current = UmbracoContext?.PublishedRequest?.PublishedContent;
-            var root = current?.Root();
-            IEnumerable<IPublishedContent> servicePages = root?.ChildrenOfType(ContentModels.ServicePage.ModelTypeAlias)
-                ?? Enumerable.Empty<IPublishedContent>();
-            var servicePage = servicePages.FirstOrDefault();
-            IEnumerable<IPublishedContent> serviceChildren = servicePage?.ChildrenOfType(ContentModels.ServiceDetail.ModelTypeAlias)
-                ?? Enumerable.Empty<IPublishedContent>();
+            // Safely access UmbracoContext with try-catch
+            try
+            {
+                var current = UmbracoContext?.PublishedRequest?.PublishedContent;
+                if (current != null)
+                {
+                    var root = current.Root();
+                    if (root != null)
+                    {
+                        var servicePages = root.ChildrenOfType(ContentModels.ServicePage.ModelTypeAlias)
+                            ?? Enumerable.Empty<IPublishedContent>();
+                        var servicePage = servicePages.FirstOrDefault();
+                        if (servicePage != null)
+                        {
+                            var serviceChildren = servicePage.ChildrenOfType(ContentModels.ServiceDetail.ModelTypeAlias)
+                                ?? Enumerable.Empty<IPublishedContent>();
 
-            var serviceOptions = serviceChildren
-                .Select(x => x.Name)
-                .Where(x => !string.IsNullOrWhiteSpace(x))
-                .Distinct(System.StringComparer.OrdinalIgnoreCase)
-                .ToList();
+                            var serviceOptions = serviceChildren
+                                .Select(x => x.Name)
+                                .Where(x => !string.IsNullOrWhiteSpace(x))
+                                .Distinct(System.StringComparer.OrdinalIgnoreCase)
+                                .ToList();
 
-            model.Options = serviceOptions.Any()
-                ? serviceOptions
-                : new[] { "Financial consulting", "Business consulting", "Tax planning" };
+                            if (serviceOptions.Any())
+                            {
+                                model.Options = serviceOptions;
+                                model.FormId = string.IsNullOrWhiteSpace(model.FormId) ? "callback-request" : model.FormId;
+                                return;
+                            }
+                        }
+                    }
+                }
+            }
+            catch
+            {
+                // If UmbracoContext access fails, use defaults
+            }
 
+            // Default options if UmbracoContext access fails or no options found
+            model.Options = new[] { "Financial consulting", "Business consulting", "Tax planning" };
             model.FormId = string.IsNullOrWhiteSpace(model.FormId) ? "callback-request" : model.FormId;
         }
 
@@ -109,12 +168,26 @@ namespace UmbracoCMS.Controllers
                 return;
             }
 
+            // Safely access UmbracoContext with try-catch
+            string fromEmail = "noreply@onatrix.com";
+            string fromName = "Onatrix";
+
+            try
+            {
 #pragma warning disable 618
-            var rootContent = UmbracoContext?.Content?.GetAtRoot() ?? Enumerable.Empty<IPublishedContent>();
+                var rootContent = UmbracoContext?.Content?.GetAtRoot() ?? Enumerable.Empty<IPublishedContent>();
 #pragma warning restore 618
-            var siteSettings = rootContent.OfType<ContentModels.SiteSettings>().FirstOrDefault();
-            var fromEmail = !string.IsNullOrWhiteSpace(siteSettings?.ContactEmail) ? siteSettings!.ContactEmail : "noreply@onatrix.com";
-            var fromName = !string.IsNullOrWhiteSpace(siteSettings?.SiteName) ? siteSettings!.SiteName : "Onatrix";
+                var siteSettings = rootContent.OfType<ContentModels.SiteSettings>().FirstOrDefault();
+                if (siteSettings != null)
+                {
+                    fromEmail = !string.IsNullOrWhiteSpace(siteSettings.ContactEmail) ? siteSettings.ContactEmail : fromEmail;
+                    fromName = !string.IsNullOrWhiteSpace(siteSettings.SiteName) ? siteSettings.SiteName : fromName;
+                }
+            }
+            catch
+            {
+                // Use defaults if UmbracoContext access fails
+            }
 
             var subject = $"{fromName} – we received your callback request";
             var selectedService = string.IsNullOrWhiteSpace(model.SelectedOption) ? "N/A" : model.SelectedOption;
