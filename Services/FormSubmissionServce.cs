@@ -3,7 +3,7 @@ using UmbracoCMS.ViewModels;
 
 namespace UmbracoCMS.Services
 {
-    public class FormSubmissionsService(IContentService contentService)
+    public class FormSubmissionsService(IContentService contentService) : IFormSubmissionsService
     {
         private readonly IContentService _contentService = contentService;
 
