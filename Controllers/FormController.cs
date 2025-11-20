@@ -43,7 +43,7 @@ namespace UmbracoCMS.Controllers
         {
             if (model == null || !ModelState.IsValid)
             {
-                return RedirectToHomepage();
+                return Redirect("/");
             }
 
             PopulateFormOptions(model);
@@ -52,7 +52,7 @@ namespace UmbracoCMS.Controllers
 
             if (!saveResult)
             {
-                return RedirectToHomepage();
+                return Redirect("/");
             }
 
             await SendConfirmationEmailAsync(model);
@@ -65,30 +65,7 @@ namespace UmbracoCMS.Controllers
                 return Redirect(returnUrl);
             }
 
-            var currentPage = UmbracoContext?.PublishedRequest?.PublishedContent;
-            if (currentPage != null)
-            {
-                var currentPageUrl = publishedUrlProvider.GetUrl(currentPage);
-                if (!string.IsNullOrEmpty(currentPageUrl))
-                {
-                    return Redirect(currentPageUrl);
-                }
-            }
-
-            return RedirectToHomepage();
-        }
-
-        private IActionResult RedirectToHomepage()
-        {
-            var root = UmbracoContext?.PublishedRequest?.PublishedContent?.Root();
-            if (root != null)
-            {
-                var rootUrl = publishedUrlProvider.GetUrl(root);
-                if (!string.IsNullOrEmpty(rootUrl))
-                {
-                    return Redirect(rootUrl);
-                }
-            }
+            // Fallback to homepage
             return Redirect("/");
         }
 
