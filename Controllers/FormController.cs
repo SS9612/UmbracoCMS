@@ -65,7 +65,17 @@ namespace UmbracoCMS.Controllers
                 return Redirect(returnUrl);
             }
 
-            return RedirectToCurrentUmbracoPage();
+            var currentPage = UmbracoContext?.PublishedRequest?.PublishedContent;
+            if (currentPage != null)
+            {
+                var currentPageUrl = publishedUrlProvider.GetUrl(currentPage);
+                if (!string.IsNullOrEmpty(currentPageUrl))
+                {
+                    return Redirect(currentPageUrl);
+                }
+            }
+
+            return RedirectToHomepage();
         }
 
         private IActionResult RedirectToHomepage()
@@ -73,7 +83,11 @@ namespace UmbracoCMS.Controllers
             var root = UmbracoContext?.PublishedRequest?.PublishedContent?.Root();
             if (root != null)
             {
-                return Redirect(root.Url());
+                var rootUrl = publishedUrlProvider.GetUrl(root);
+                if (!string.IsNullOrEmpty(rootUrl))
+                {
+                    return Redirect(rootUrl);
+                }
             }
             return Redirect("/");
         }
