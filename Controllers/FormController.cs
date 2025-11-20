@@ -41,26 +41,18 @@ namespace UmbracoCMS.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> HandleCallbackForm(CallbackFormViewModel model, [FromQuery] string? returnUrl)
         {
-            if (model == null)
+            if (model == null || !ModelState.IsValid)
             {
-                model = new CallbackFormViewModel();
+                return RedirectToHomepage();
             }
 
             PopulateFormOptions(model);
-
-            if (!ModelState.IsValid)
-            {
-                ViewData["CallbackFormModel"] = model;
-                return CurrentUmbracoPage();
-            }
 
             var saveResult = await _formSubmissions.SaveCallbackRequestAsync(model);
 
             if (!saveResult)
             {
-                ModelState.AddModelError("", "There was an error saving your request. Please try again later.");
-                ViewData["CallbackFormModel"] = model;
-                return CurrentUmbracoPage();
+                return RedirectToHomepage();
             }
 
             await SendConfirmationEmailAsync(model);
@@ -74,6 +66,16 @@ namespace UmbracoCMS.Controllers
             }
 
             return RedirectToCurrentUmbracoPage();
+        }
+
+        private IActionResult RedirectToHomepage()
+        {
+            var root = UmbracoContext?.PublishedRequest?.PublishedContent?.Root();
+            if (root != null)
+            {
+                return Redirect(root.Url());
+            }
+            return Redirect("/");
         }
 
         private void PopulateFormOptions(CallbackFormViewModel model)
