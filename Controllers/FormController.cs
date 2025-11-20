@@ -17,7 +17,6 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using UmbracoCMS.ViewModels;
 using UmbracoCMS.Services;
-using UmbracoCMS.Filters;
 using ContentModels = Umbraco.Cms.Web.Common.PublishedModels;
 using Umbraco.Cms.Core.Models.PublishedContent;
 
@@ -39,17 +38,12 @@ namespace UmbracoCMS.Controllers
         private readonly ILogger<FormController> _logger = logger;
 
         [HttpPost]
-        [SafeValidateAntiForgeryToken]
-        public async Task<IActionResult> HandleCallbackForm(CallbackFormViewModel model, [FromQuery] string? returnUrl)
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> HandleCallbackForm(CallbackFormViewModel model)
         {
-            if (model == null)
-            {
-                return new RedirectResult("/", permanent: false);
-            }
-
             if (!ModelState.IsValid)
             {
-                return new RedirectResult("/", permanent: false);
+                return CurrentUmbracoPage();
             }
 
             try
@@ -62,11 +56,11 @@ namespace UmbracoCMS.Controllers
                 model.FormId = string.IsNullOrWhiteSpace(model.FormId) ? "callback-request" : model.FormId;
             }
 
-            var saveResult = await _formSubmissions.SaveCallbackRequestAsync(model);
-
-            if (!saveResult)
+            var result = await _formSubmissions.SaveCallbackRequestAsync(model);
+            if (!result)
             {
-                return new RedirectResult("/", permanent: false);
+                TempData["FormError"] = "Something went wrong while submitting your request. Please try again later.";
+                return RedirectToCurrentUmbracoPage();
             }
 
             try
@@ -78,26 +72,11 @@ namespace UmbracoCMS.Controllers
                 _logger.LogError(ex, "Failed to send confirmation email");
             }
 
+            TempData["FormSuccess"] = "Thank you! Your request has been received and we will get back to you soon";
             TempData["CallbackFormSuccess"] = string.IsNullOrWhiteSpace(model.FormId) ? "callback-request" : model.FormId;
             TempData["CallbackFormRecipient"] = model.Name ?? model.Email ?? string.Empty;
 
-            string redirectUrl = "/";
-            if (!string.IsNullOrEmpty(returnUrl))
-            {
-                try
-                {
-                    if (Url.IsLocalUrl(returnUrl))
-                    {
-                        redirectUrl = returnUrl;
-                    }
-                }
-                catch
-                {
-                    redirectUrl = "/";
-                }
-            }
-
-            return new RedirectResult(redirectUrl, permanent: false);
+            return RedirectToCurrentUmbracoPage();
         }
 
         private void PopulateFormOptions(CallbackFormViewModel model)
@@ -159,7 +138,7 @@ namespace UmbracoCMS.Controllers
                 return;
             }
 
-            string fromEmail = "noreply@onatrix.com";
+            string fromEmail = "stefan.m.strandberg@hotmail.com";
             string fromName = "Onatrix";
 
             try
