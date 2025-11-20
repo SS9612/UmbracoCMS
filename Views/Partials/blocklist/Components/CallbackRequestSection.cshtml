@@ -2,6 +2,7 @@
 @using ContentModels = Umbraco.Cms.Web.Common.PublishedModels;
 @using Umbraco.Extensions;
 @using UmbracoCMS.ViewModels;
+@using UmbracoCMS.Controllers;
 @using Umbraco.Cms.Core.Models.PublishedContent;
 @using System.Linq;
 
@@ -112,7 +113,8 @@
                     </div>
                 }
 
-                <form action="/umbraco/surface/Form/HandleCallbackForm?returnUrl=@Uri.EscapeDataString(currentPageUrl)" method="post" id="callbackRequestForm">
+                @using (Html.BeginUmbracoForm<FormController>("HandleCallbackForm", new { returnUrl = currentPageUrl }, new { id = "callbackRequestForm" }))
+                {
                     @Html.AntiForgeryToken()
                     <input type="hidden" name="FormId" value="@formModel.FormId" />
 
@@ -184,7 +186,7 @@
                             @submitLabel
                         </button>
                     </div>
-                </form>
+                }
             </div>
         </div>
     </div>
