@@ -17,6 +17,7 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using UmbracoCMS.ViewModels;
 using UmbracoCMS.Services;
+using UmbracoCMS.Filters;
 using ContentModels = Umbraco.Cms.Web.Common.PublishedModels;
 using Umbraco.Cms.Core.Models.PublishedContent;
 
@@ -38,29 +39,25 @@ namespace UmbracoCMS.Controllers
         private readonly ILogger<FormController> _logger = logger;
 
         [HttpPost]
-        [ValidateAntiForgeryToken]
+        [SafeValidateAntiForgeryToken]
         public async Task<IActionResult> HandleCallbackForm(CallbackFormViewModel model, [FromQuery] string? returnUrl)
         {
-            // Early return for null model - avoid any processing
             if (model == null)
             {
                 return new RedirectResult("/", permanent: false);
             }
 
-            // Early return for invalid model state - avoid any UmbracoContext access
             if (!ModelState.IsValid)
             {
                 return new RedirectResult("/", permanent: false);
             }
 
-            // Only populate options if model is valid - this is safe now
             try
             {
                 PopulateFormOptions(model);
             }
             catch
             {
-                // If PopulateFormOptions fails, use default options
                 model.Options = new[] { "Financial consulting", "Business consulting", "Tax planning" };
                 model.FormId = string.IsNullOrWhiteSpace(model.FormId) ? "callback-request" : model.FormId;
             }
@@ -72,7 +69,6 @@ namespace UmbracoCMS.Controllers
                 return new RedirectResult("/", permanent: false);
             }
 
-            // Send email in background - don't let it block or cause issues
             try
             {
                 await SendConfirmationEmailAsync(model);
@@ -85,7 +81,6 @@ namespace UmbracoCMS.Controllers
             TempData["CallbackFormSuccess"] = string.IsNullOrWhiteSpace(model.FormId) ? "callback-request" : model.FormId;
             TempData["CallbackFormRecipient"] = model.Name ?? model.Email ?? string.Empty;
 
-            // Validate returnUrl safely
             string redirectUrl = "/";
             if (!string.IsNullOrEmpty(returnUrl))
             {
@@ -98,7 +93,6 @@ namespace UmbracoCMS.Controllers
                 }
                 catch
                 {
-                    // If URL validation fails, use default
                     redirectUrl = "/";
                 }
             }
@@ -118,7 +112,6 @@ namespace UmbracoCMS.Controllers
                 return;
             }
 
-            // Safely access UmbracoContext with try-catch
             try
             {
                 var current = UmbracoContext?.PublishedRequest?.PublishedContent;
@@ -153,10 +146,8 @@ namespace UmbracoCMS.Controllers
             }
             catch
             {
-                // If UmbracoContext access fails, use defaults
             }
 
-            // Default options if UmbracoContext access fails or no options found
             model.Options = new[] { "Financial consulting", "Business consulting", "Tax planning" };
             model.FormId = string.IsNullOrWhiteSpace(model.FormId) ? "callback-request" : model.FormId;
         }
@@ -168,7 +159,6 @@ namespace UmbracoCMS.Controllers
                 return;
             }
 
-            // Safely access UmbracoContext with try-catch
             string fromEmail = "noreply@onatrix.com";
             string fromName = "Onatrix";
 
@@ -186,7 +176,6 @@ namespace UmbracoCMS.Controllers
             }
             catch
             {
-                // Use defaults if UmbracoContext access fails
             }
 
             var subject = $"{fromName} – we received your callback request";
