@@ -37,17 +37,6 @@ namespace UmbracoCMS.Controllers
         private readonly IEmailSender _emailSender = emailSender;
         private readonly ILogger<FormController> _logger = logger;
 
-        [HttpGet]
-        public IActionResult HandleCallbackForm([FromQuery] string? returnUrl)
-        {
-            if (!string.IsNullOrEmpty(returnUrl) && Url.IsLocalUrl(returnUrl))
-            {
-                return Redirect(returnUrl);
-            }
-
-            return RedirectToCurrentUmbracoPage();
-        }
-
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> HandleCallbackForm(CallbackFormViewModel model, [FromQuery] string? returnUrl)
