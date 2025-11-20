@@ -50,7 +50,8 @@ namespace UmbracoCMS.Controllers
                 
                 _logger.LogWarning("ModelState is invalid. Errors: {Errors}", string.Join("; ", errors));
                 
-                return CurrentUmbracoPage();
+                TempData["FormValidationErrors"] = string.Join("; ", errors);
+                return RedirectToCurrentUmbracoPage();
             }
 
             try
