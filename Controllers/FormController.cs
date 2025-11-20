@@ -39,7 +39,7 @@ namespace UmbracoCMS.Controllers
         private readonly ILogger<FormController> _logger = logger;
 
         [HttpPost]
-        [SafeValidateAntiForgeryToken]
+        //[SafeValidateAntiForgeryToken]
         public async Task<IActionResult> HandleCallbackForm(CallbackFormViewModel model)
         {
             if (model == null)
@@ -59,7 +59,7 @@ namespace UmbracoCMS.Controllers
                     TempData["FormValidationErrors"] = string.Join(" ", errors);
                 }
 
-                return RedirectToCurrentUmbracoPage();
+                return CurrentUmbracoPage();
             }
 
             try
@@ -72,12 +72,12 @@ namespace UmbracoCMS.Controllers
                 model.FormId = string.IsNullOrWhiteSpace(model.FormId) ? "callback-request" : model.FormId;
             }
 
-            var result = await _formSubmissions.SaveCallbackRequestAsync(model);
-            if (!result)
-            {
-                TempData["FormError"] = "Something went wrong while submitting your request. Please try again later.";
-                return RedirectToCurrentUmbracoPage();
-            }
+            //var result = await _formSubmissions.SaveCallbackRequestAsync(model);
+            //if (!result)
+            //{
+            //    TempData["FormError"] = "Something went wrong while submitting your request. Please try again later.";
+            //    return RedirectToCurrentUmbracoPage();
+            //}
 
             try
             {
