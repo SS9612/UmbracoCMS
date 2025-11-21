@@ -101,10 +101,91 @@
                 {
                     <div class="mb-4 rounded-[18px] border border-green-200 bg-green-50 px-6 py-3 text-sm text-green-700 shadow-sm">
                         <strong class="text-green-800">@formSuccess</strong>
+<<<<<<< HEAD
+=======
                     </div>
                 }
 
+                @using (Html.BeginUmbracoForm<FormController>("HandleCallbackForm", new { }, new { id = "callbackRequestForm" }))
+                {
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" name="FormId" value="@formModel.FormId" />
+
+                    <div asp-validation-summary="ModelOnly" class="mb-3 text-sm text-red-600"></div>
+
+                    <div class="flex flex-col gap-6 md:flex-row md:flex-nowrap md:items-start md:gap-10">
+                        <div class="w-full md:w-1/2 flex flex-col gap-6">
+                            <div class="flex flex-col">
+                                <label for="callback-name" class="sr-only">Name</label>
+                                @Html.TextBox("Name", formModel.Name, new
+                                {
+                                    @class = "w-full rounded-xl border border-[#e1e5e4] px-5 py-4 italic text-[0.95rem] text-[#3e443f] placeholder:text-[#9ea4a1] focus:outline-none focus:border-[#4f5955] focus:ring-4 focus:ring-[#4f5955]/15",
+                                    id = "callback-name",
+                                    placeholder = "Name"
+                                })
+                                @Html.ValidationMessage("Name", "", new { @class = "text-sm text-red-600 mt-1" })
+                            </div>
+
+                            <div class="flex flex-col">
+                                <label for="callback-email" class="sr-only">Email address</label>
+                                @Html.TextBox("Email", formModel.Email, new
+                                {
+                                    @class = "w-full rounded-xl border border-[#e1e5e4] px-5 py-4 italic text-[0.95rem] text-[#3e443f] placeholder:text-[#9ea4a1] focus:outline-none focus:border-[#4f5955] focus:ring-4 focus:ring-[#4f5955]/15",
+                                    id = "callback-email",
+                                    placeholder = "Email address",
+                                    type = "email"
+                                })
+                                @Html.ValidationMessage("Email", "", new { @class = "text-sm text-red-600 mt-1" })
+                            </div>
+                        </div>
+
+                        <div class="w-full md:w-1/2 flex flex-col gap-6">
+                            <div class="flex flex-col">
+                                <label for="callback-phone" class="sr-only">Phone</label>
+                                @Html.TextBox("Phone", formModel.Phone, new
+                                {
+                                    @class = "w-full rounded-xl border border-[#e1e5e4] px-5 py-4 italic text-[0.95rem] text-[#3e443f] placeholder:text-[#9ea4a1] focus:outline-none focus:border-[#4f5955] focus:ring-4 focus:ring-[#4f5955]/15",
+                                    id = "callback-phone",
+                                    placeholder = "Phone"
+                                })
+                                @Html.ValidationMessage("Phone", "", new { @class = "text-sm text-red-600 mt-1" })
+                            </div>
+
+                            <div class="flex flex-col">
+                                <label for="callback-option" class="sr-only">Service interest</label>
+                                <div class="relative">
+                                    <select id="callback-option"
+                                            name="SelectedOption"
+                                            class="w-full appearance-none rounded-xl border border-[#e1e5e4] px-5 py-4 pr-12 italic text-[0.95rem] text-[#3e443f] placeholder:text-[#9ea4a1] focus:outline-none focus:border-[#4f5955] focus:ring-4 focus:ring-[#4f5955]/15 cursor-pointer">
+                                        @foreach (var option in formModel.Options)
+                                        {
+                                            var isSelected = string.Equals(formModel.SelectedOption, option, System.StringComparison.OrdinalIgnoreCase);
+                                            <option value="@option" selected="@(isSelected ? "selected" : null)">@option</option>
+                                        }
+                                    </select>
+                                    <span class="pointer-events-none absolute inset-y-0 right-4 flex items-center" aria-hidden="true">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24">
+                                            <path d="m6 9 6 6 6-6" stroke="#3E443F" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                                        </svg>
+                                    </span>
+                                </div>
+                                @Html.ValidationMessage("SelectedOption", "", new { @class = "text-sm text-red-600 mt-1" })
+                            </div>
+                        </div>
+>>>>>>> cf996fd1222ac93ef69ca9d0095152a930564b49
+                    </div>
+                }
+
+<<<<<<< HEAD
                 <partial name="Partials/Forms/_CallbackForm" model="formModel" view-data="@(new ViewDataDictionary(ViewData) { { "FormLayoutType", "two-column" }, { "SubmitLabel", submitLabel }, { "FormId", "callbackRequestForm" } })" />
+=======
+                    <div class="mt-9 flex justify-center">
+                        <button type="submit" class="inline-flex min-w-[160px] items-center justify-center rounded-xl bg-[#4f5955] px-10 py-4 text-base font-semibold text-white transition hover:-translate-y-px hover:bg-[#434c49] hover:shadow-[0_18px_40px_rgba(79,89,85,0.25)] focus:outline-none focus-visible:ring-4 focus-visible:ring-[#4f5955]/30 active:translate-y-0 active:shadow-[0_10px_28px_rgba(79,89,85,0.2)]">
+                            @submitLabel
+                        </button>
+                    </div>
+                }
+>>>>>>> cf996fd1222ac93ef69ca9d0095152a930564b49
             </div>
         </div>
     </div>
