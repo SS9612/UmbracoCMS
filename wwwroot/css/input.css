@@ -116,11 +116,42 @@ img {
 }
 
 .about-callback-rte img {
-    width: 25% !important;
-    max-width: 25% !important;
+    width: 18% !important;
+    max-width: 18% !important;
     height: auto !important;
     object-fit: contain !important;
     display: inline-block;
+}
+
+.about-callback-rte p {
+    margin-bottom: 1.5rem !important;
+}
+
+.about-callback-rte p.text-rte-lg.font-bold {
+    margin-bottom: 40px !important;
+}
+
+.about-callback-rte p.text-rte-lg {
+    margin-bottom: 40px !important;
+}
+
+.about-callback-rte h1,
+.about-callback-rte h2,
+.about-callback-rte h3,
+.about-callback-rte h4,
+.about-callback-rte h5,
+.about-callback-rte h6 {
+    margin-bottom: 1rem !important;
+    margin-top: 1.5rem !important;
+}
+
+.about-callback-rte h1:first-child,
+.about-callback-rte h2:first-child,
+.about-callback-rte h3:first-child,
+.about-callback-rte h4:first-child,
+.about-callback-rte h5:first-child,
+.about-callback-rte h6:first-child {
+    margin-top: 0 !important;
 }
 
 .about-team-member-section .about-team-member-img {
