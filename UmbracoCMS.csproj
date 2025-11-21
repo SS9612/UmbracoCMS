@@ -38,6 +38,7 @@
     <Content Include="wwwroot\media\**\*.*" CopyToPublishDirectory="PreserveNewest" />
   </ItemGroup>
 
+
   <PropertyGroup>
     <CopyRazorGenerateFilesToPublishDirectory>true</CopyRazorGenerateFilesToPublishDirectory>
   </PropertyGroup>

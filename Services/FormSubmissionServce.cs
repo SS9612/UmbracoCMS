@@ -3,15 +3,23 @@ using UmbracoCMS.ViewModels;
 
 namespace UmbracoCMS.Services
 {
-    public class FormSubmissionsService(IContentService contentService) : IFormSubmissionsService
+    public class FormSubmissionsService
     {
-        private readonly IContentService _contentService = contentService;
+        private readonly IContentService _contentService;
+
+        public FormSubmissionsService(IContentService contentService)
+        {
+            _contentService = contentService;
+        }
 
         public bool SaveCallbackRequest(CallbackFormViewModel model)
         {
             try
             {
-                var container = _contentService.GetRootContent().FirstOrDefault(x => x.ContentType.Alias == "formSubmissions");
+                var container = _contentService
+                    .GetRootContent()
+                    .FirstOrDefault(x => x.ContentType.Alias == "formSubmissions");
+
                 if (container == null)
                     return false;
 
@@ -21,23 +29,15 @@ namespace UmbracoCMS.Services
                 request.SetValue("callbackRequestName", model.Name);
                 request.SetValue("callbackRequestEmail", model.Email);
                 request.SetValue("callbackRequestPhone", model.Phone);
-                request.SetValue("callbackRequestOption", model.SelectedOption ?? string.Empty);
+                request.SetValue("callbackRequestOption", model.SelectedOption);
 
                 var saveResult = _contentService.Save(request);
                 return saveResult.Success;
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                Console.WriteLine($"Error saving form: {ex.Message}");
-                Console.WriteLine($"Stack trace: {ex.StackTrace}");
+                return false;
             }
-
-            return false;
-        }
-
-        public Task<bool> SaveCallbackRequestAsync(CallbackFormViewModel model)
-        {
-            return Task.FromResult(SaveCallbackRequest(model));
         }
     }
 }
